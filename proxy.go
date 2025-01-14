@@ -12,8 +12,10 @@ import (
 func NewRedirect(m map[string]string) func(w http.ResponseWriter, r *http.Request) *httputil.ReverseProxy {
 	return func(w http.ResponseWriter, r *http.Request) *httputil.ReverseProxy {
 		hst := r.Host
+		s := strings.Split(hst, ".")
+		subd := s[0]
 		//u must be replaced by the url of docker container of sub domain ?
-		u, _ := url.Parse(m[hst])
+		u, _ := url.Parse(m[subd])
 		proxy := httputil.NewSingleHostReverseProxy(u)
 		r.URL.Host = u.Host
 		r.URL.Scheme = u.Scheme
@@ -34,11 +36,11 @@ func Getdomains() []string {
 func Getservicesmap() map[string]string {
 	var m = map[string]string{}
 	dom := os.Getenv("DOMAIN")
-	ser := os.Getenv("SERVICE")
+	//ser := os.Getenv("SERVICE")
 	d := strings.Split(dom, ",")
-	c := strings.Split(ser, ",")
-	for i, v := range d {
-		x := "http://" + c[i]
+	//c := strings.Split(ser, ",")
+	for _, v := range d {
+		x := "http://" + v + "running"
 		m[v] = x
 	}
 	return m
