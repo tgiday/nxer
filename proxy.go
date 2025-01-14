@@ -40,7 +40,7 @@ func Getservicesmap() map[string]string {
 	d := strings.Split(dom, ",")
 	//c := strings.Split(ser, ",")
 	for _, v := range d {
-		x := "http://" + v + "running"
+		x := "http://" + v + "runing"
 		m[v] = x
 	}
 	return m
