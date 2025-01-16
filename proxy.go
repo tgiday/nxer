@@ -26,18 +26,22 @@ func NewRedirect(m map[string]string) func(w http.ResponseWriter, r *http.Reques
 }
 
 // Getdomains return list of subdomains, from the enviroment var DOMAIN
-func Getdomains() []string {
-	domain := os.Getenv("DOMAIN")
-	s := strings.Split(domain, ",")
+func Getdomains(domainName string) []string {
+	subdomains := os.Getenv("DOMAIN")
+	subs := strings.Split(subdomains, ",")
+	s := []string{}
+	for _, v := range subs {
+		s = append(s, v+"."+domainName)
+	}
 	return s
 }
 
 // Getservicesmap return map of subdomains to services, from enviroment vars DOMAIN and SERVICE
 func Getservicesmap() map[string]string {
 	var m = map[string]string{}
-	dom := os.Getenv("DOMAIN")
+	subdomains := os.Getenv("DOMAIN")
 	//ser := os.Getenv("SERVICE")
-	d := strings.Split(dom, ",")
+	d := strings.Split(subdomains, ",")
 	//c := strings.Split(ser, ",")
 	for _, v := range d {
 		x := "http://" + v + "runing"
