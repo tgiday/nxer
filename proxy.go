@@ -4,7 +4,6 @@ import (
 	"net/http"
 	"net/http/httputil"
 	"net/url"
-	"os"
 	"strings"
 )
 
@@ -35,27 +34,37 @@ func NewRedirect(m map[string]string) func(w http.ResponseWriter, r *http.Reques
 	}
 }
 
-// Getdomains return list of subdomains, from the enviroment var DOMAIN
-func Getdomains(domainName string) []string {
-	subdomains := os.Getenv("DOMAIN")
-	subs := strings.Split(subdomains, ",")
-	s := []string{}
-	for _, v := range subs {
-		s = append(s, v+"."+domainName)
+func maper[S any, D any](s []S, d *[]D, m func(S) D) {
+	if cap(*d) == 0 {
+		(*d) = make([]D, len(s))
 	}
-	return s
+	for i, e := range s {
+		(*d)[i] = m(e)
+	}
 }
 
-// Getservicesmap return map of subdomains to services, from enviroment vars DOMAIN and SERVICE
-func Getservicesmap() map[string]string {
-	var m = map[string]string{}
-	subdomains := os.Getenv("DOMAIN")
-	//ser := os.Getenv("SERVICE")
-	d := strings.Split(subdomains, ",")
-	//c := strings.Split(ser, ",")
-	for _, v := range d {
-		x := "http://" + v + "runing"
-		m[v] = x
+// Getdomains return list of subdomains, from the enviroment variable
+func Getdomains(sub []string, domain string) []string {
+	domains := []string{}
+	domfunc := func(s string) string {
+		return s + "." + domain
 	}
+	maper(sub, &domains, domfunc)
+	domains = append(domains, domain)
+	return domains
+}
+
+// Getservicesmap return map of subdomains to services, from enviroment variable and suffix string(eg: "www":"http://www" + sfx)
+func Getservicesmap(sub []string, sfx string) map[string]string {
+	serfunc := func(s string) string {
+		return "http://" + s + sfx
+	}
+	services := []string{}
+	maper(sub, &services, serfunc)
+	m := map[string]string{}
+	for i, v := range sub {
+		m[v] = services[i]
+	}
+
 	return m
 }
