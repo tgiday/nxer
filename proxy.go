@@ -16,7 +16,7 @@ func NewRedirect(m map[string]string) func(w http.ResponseWriter, r *http.Reques
 		//u must be replaced by the url of docker container of sub domain ?
 		_, ok := m[subd]
 		if !ok {
-			u, _ := url.Parse(m["www"])
+			u, _ := url.Parse(m["home"])
 			proxy := httputil.NewSingleHostReverseProxy(u)
 			r.URL.Host = u.Host
 			r.URL.Scheme = u.Scheme
