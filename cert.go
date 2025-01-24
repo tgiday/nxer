@@ -23,11 +23,11 @@ func GetLetsEncryptCert(certManager *autocert.Manager) func(hello *tls.ClientHel
 		ltsenCrt := filepath.Join(string(dirCache), hello.ServerName)
 		keyCrt, err := os.ReadFile(ltsenCrt)
 		if err != nil {
-			log.Fatal(err)
+			log.Println(err)
 		}
 		p, err := spltPem(keyCrt)
 		if err != nil {
-			log.Fatal(err)
+			log.Println(err)
 		}
 		certificate, err := tls.X509KeyPair(p.crt, p.key)
 		if err != nil {
